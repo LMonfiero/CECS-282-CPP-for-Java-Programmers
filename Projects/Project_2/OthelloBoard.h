@@ -33,7 +33,7 @@ public:
 	If there are no legal moves for the current player, then a single "pass"
 	OthelloMove should be the only element of the returned vector.
 	*/
-	// std::vector<std::unique_ptr<OthelloMove>> GetPossibleMoves() const;
+	std::vector<std::unique_ptr<OthelloMove>> GetPossibleMoves() const;
 
 	/*
 	Applies a valid move to the board, updating the board state accordingly.
@@ -79,6 +79,8 @@ public:
 		return mBoard[position.GetRow()][position.GetCol()];
 	}
 
+	bool IsFinished();
+
 private:
 	// OthelloView needs access to mBoard for printing
 	friend class OthelloView;
@@ -106,5 +108,5 @@ private:
 		return atPosition != Player::EMPTY && atPosition != p;
 	}
 
-	
+	// m.get()->AddFlipSet(OthelloMove::FlipSet(flipCount, direction));
 };

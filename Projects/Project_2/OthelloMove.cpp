@@ -8,11 +8,9 @@ bool OthelloMove::operator==(const OthelloMove &rhs)    {
     return (mPosition == rhs.mPosition ? true : false);
 }
 
-//1/5 Lines
+//3/5 Lines
 OthelloMove::operator std::string() const   {
     //Uses BoardPosition form of operator std::string()
-    // return mPosition.operator std::string();
-    // return string(mPosition);
     ostringstream os;
     os << "(" << +mPosition.GetRow() << ", " << +mPosition.GetCol() << ")";
     return os.str();

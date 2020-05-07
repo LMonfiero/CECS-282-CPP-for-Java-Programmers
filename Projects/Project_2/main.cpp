@@ -9,51 +9,126 @@
 
 using namespace std;
 
-//80 Lines
+//69/80 Lines ;)
 int main(int argc, char* argv[]) {	
 	// Initialization
 	auto board = std::make_shared<OthelloBoard>(); // the state of the game board
 	OthelloView v(board); // a View for outputting the board via operator<<
 	string userInput; // a string to hold the user's command choice
+	unique_ptr<OthelloMove> m;//initialize m
 
-	// Start with this DEBUGGING CODE to make sure your basic OthelloMove and 
-	// OthelloBoard classes work, then remove it when you are ready to work
-	// on the real main.
-	cout << "Initial board:" << endl;
-	cout << v << endl;
-	unique_ptr<OthelloMove> m{ v.ParseMove("(3, 2)") };
-	//Couting the char value for some reason; regular BoardPosition works fine
-	cout << "Applying the move " << (string)*m << endl;
-	board->ApplyMove(std::move(m));
-	cout << endl << v << endl; // should show a changed board.
+	// Main loop
+	bool gameOn = false;
+	do {
+		//Prints board, prompt, and possible moves
+		cout << v <<  "\nPossible Moves: " << endl;
+		auto moveList = board->GetPossibleMoves();
+		for (auto itr = moveList.begin(); itr != moveList.end(); itr++)	{
+			cout << *(*itr) << " ";
+		}
+		
+		cout << "\nChoose a command: \n";
+		getline(cin, userInput);
+		cout << "DEBUG OUTPUT: You entered: \"" << userInput << "\"\n";
 
-	m = v.ParseMove("(4, 2)");
-	cout << "Applying the move " << *m << endl;
-	board->ApplyMove(std::move(m));
-	cout << endl << v << endl;
+		if (userInput == "quit")	{
+			cout << "\nQuitting Game...\n";
+			gameOn = true;
+		}
 
-	m = v.ParseMove("(5, 2)");
-	cout << "Applying the move " << *m << endl;
-	board->ApplyMove(std::move(m));
-	cout << endl << v << endl;
+		else if (userInput == "showHistory")	{
+			cout << "\nShowing history: \n";
+			//auto Doesn't work ???
+			// auto historyList = board->GetMoveHistory();
+			char prevPlayer = (char) board->GetCurrentPlayer() * -1;
+			for (auto itr = board->GetMoveHistory().rbegin(); itr != board->GetMoveHistory().rend(); itr++)	{
+				string player = prevPlayer == 1 ? "Black" : "White";
+				prevPlayer *= -1;
+				if (*(*itr) == BoardPosition {-1, -1})	{
+					cout << player << ": pass" << endl;
+				}
 
-	// END OF DEBUGGING CODE
+				else	{
+					cout << player << ": " << *(*itr) << endl;
+				}
+			}
+		}
 
-// 	// Main loop
-// 	do {
-// 		//For printing it should be PrintBoard(std::cout);
-// 		// Print the game board using the OthelloView object
+		else if (userInput == "showValue")	{
+			cout << "Current points: " << board->GetValue();
+		}
 
-// 	   // Print all possible moves
+		else if (userInput.substr(0, 4) == "undo")	{
+			string nString = userInput.substr(5);
+			stringstream ss(nString); 
+    		int n = 0; 
+    		ss >> n; 
+			cout << "Preparing to undo " << n << " moves...\n";
+			for (int i = 0; i < n; i++)	{
+				//call undo
+				if (board->GetMoveHistory().size() > 0)	{
+					board->UndoLastMove();
+				}
+				
+				else {
+					cout << "\nHistory is empty!\n";
+				}
+			}
+		}
 
-// 	   // Ask to input a command
+		else if (userInput.substr(0, 4) == "move")	{
+			//if onlyPass isn't (-1, -1), it will apply move normally
+			auto onlyPass = moveList.begin();
+			//Lets you pass any time you want - Debug purposes
+			// if (userInput.substr(5) == "pass")	{
+			//rhs of && is to make sure that pass is the only possible move REAL STUFF HERE
+			if (userInput.substr(5) == "pass" && (*(*onlyPass) == BoardPosition {-1, -1}))	{
+				cout << "\nPassing.\n";
+				m = v.ParseMove("(-1, -1)");
+				board->ApplyMove(std::move(m));
+			}
 
-// 	   // Command loop:
-// 		  // move (r,c)
-// 		  // undo n
-// 		  // showValue
-// 		  // showHistory
-// 		  // quit
+			//If they try to apply a move when pass is the only available option
+			else if (*(*onlyPass) == BoardPosition {-1, -1})	{
+				while (userInput != "move pass")	{
+					cout << "No possible moves available! Must pass!\n";
+					getline (cin, userInput);
+				}
+				cout << "\nPassing.\n";
+				m = v.ParseMove("(-1, -1)");
+				board->ApplyMove(std::move(m));
+			}
+			
+			else {
+				bool valid = false;
+				m = v.ParseMove(userInput.substr(5));
+				for (auto itr = moveList.begin(); itr != moveList.end(); itr++)	{
+					if (*m == *(*itr))	{
+						// cout << "Applying the move " << *m << endl;
+						board->ApplyMove(std::move(m));
+						valid = true;
+						break;
+					}	
+				}
+				cout << (!valid ? "\nInvalid Move/Cannot Pass!\n" : "");
+			}
+		}
 
-// 	} while (true); // you may want to change the condition
+		else {
+			cout << "\nInvalid input!\n";
+		}
+
+		//Checks if there's 2 passes
+		if (board->IsFinished())	{
+			cout << "Game has been passed twice! Game over!";
+			gameOn = board->IsFinished();
+		}
+
+		//Message if game is over; declares  winner
+		if (gameOn)	{
+			cout << (board->GetValue() > 0 ? "\nPlayer 1 (B) " : "\nPlayer 2 (W) ")
+				<< "has won! Congratulations!\n";
+		}
+
+	} while (!gameOn);
 }

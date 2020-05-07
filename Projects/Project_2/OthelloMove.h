@@ -66,7 +66,7 @@ public:
 	// Returns true if the move represents a Pass.
 	// TO DO: fill in this method.
 	inline bool IsPass() const {
-		return (mPosition.GetRow() - '0' == -1 && mPosition.GetCol() - '0' == -1);
+		return (mPosition.GetRow() == -1 && mPosition.GetCol() == -1);
 		/* return true if this move is a "pass" */ 
 	}
 };

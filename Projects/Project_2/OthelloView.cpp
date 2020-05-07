@@ -1,5 +1,5 @@
 #include "OthelloView.h"
-// #include "OthelloBoard.h"
+//#include <sstream> -> in header
 
 using namespace std;
 
@@ -36,22 +36,21 @@ std::unique_ptr<OthelloMove> OthelloView::ParseMove(const std::string &strFormat
     row = r;
     col = c;
     BoardPosition parsed2 {row, col};
-    auto parsed = std::make_unique<OthelloMove>(parsed2);
+    unique_ptr<OthelloMove> parsed = std::make_unique<OthelloMove>(parsed2);
     return std::move(parsed);
 }
 
-//Somnething wrong with the bottom two
 //3 lines
 std::ostream& operator<< (std::ostream &lhs, const OthelloView &rhs)    {
     rhs.PrintBoard(lhs);
-    string player = (rhs.mOthelloBoard->GetCurrentPlayer() == OthelloBoard::Player::BLACK ? "Black" : "White");
-    return lhs << "\nCurrent Player: " << player << endl;
+    lhs << (rhs.mOthelloBoard->GetCurrentPlayer() == OthelloBoard::Player::BLACK ? "Black's " : "White's ");
+    // return lhs << "turn!" << endl;
+    //Debug code to display value
+    return lhs << "turn!\nCurrent Points (Debugging: Use the one on top): " << rhs.mOthelloBoard->GetValue() << endl;
 }
 
-//This is probably very wrong -- Google is an "okay" friend
 //1 line
 std::ostream& operator<<(std::ostream &lhs, const OthelloMove &rhs) {
     return (operator<<(lhs, rhs.operator std::string()));
-    // return lhs << (string)rhs;
 }
 

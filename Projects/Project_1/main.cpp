@@ -12,11 +12,12 @@ int main()  {
     char playerTurn = 1;
     
     //Initialize board
-    for (int i = 0; i < BOARD_SIZE; i++)    {
-        for (int j = 0; j < BOARD_SIZE; j++)    {
-            board[i][j] = 0;
-        }
-    }
+    // for (int i = 0; i < BOARD_SIZE; i++)    {
+    //     for (int j = 0; j < BOARD_SIZE; j++)    {
+    //         board[i][j] = 0;
+    //     }
+    // }
+    board = {0};
 
     //Start board and display it
     board[3][3] = -1;
